@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 
-from babyweight.trainer import model
+from trainer import model
 
 import tensorflow as tf
 
@@ -34,6 +34,8 @@ if __name__ == "__main__":
         type=int,
         default=512
     )
+
+    # TODO: Add nnsize argument
     parser.add_argument(
         "--nnsize",
         help="Hidden layer sizes for DNN -- provide space-separated layers",
@@ -41,18 +43,21 @@ if __name__ == "__main__":
         type=int,
         default=[128, 32, 4]
     )
+     # TODO: Add nembeds argument
     parser.add_argument(
         "--nembeds",
         help="Embedding size of a cross of n key real-valued parameters",
         type=int,
         default=3
     )
+    # TODO: Add num_epochs argument
     parser.add_argument(
         "--num_epochs",
         help="Number of epochs to train the model.",
         type=int,
         default=10
     )
+    # TODO: Add train_examples argument
     parser.add_argument(
         "--train_examples",
         help="""Number of examples (in thousands) to run the training job over.
@@ -62,6 +67,7 @@ if __name__ == "__main__":
         type=int,
         default=5000
     )
+    # TODO: Add eval_steps argument
     parser.add_argument(
         "--eval_steps",
         help="""Positive number of steps for which to evaluate model. Default
@@ -70,6 +76,7 @@ if __name__ == "__main__":
         type=int,
         default=None
     )
+  
 
     # Parse all arguments
     args = parser.parse_args()

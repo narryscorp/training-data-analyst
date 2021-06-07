@@ -1,0 +1,19 @@
+trainingInput:
+    scaleTier: STANDARD_1
+    hyperparameters:
+        hyperparameterMetricTag: rmse # TODO: Add metric we want to optimize
+        goal: MINIMIZE # TODO: MAXIMIZE or MINIMIZE?
+        maxTrials: 20
+        maxParallelTrials: 5
+        enableTrialEarlyStopping: True
+        params:
+        - parameterName: batch_size
+          type: INTEGER
+          minValue: 8
+          maxValue: 512
+          scaleType: UNIT_LOG_SCALE
+        - parameterName: nembeds
+          type: INTEGER
+          minValue: 3
+          maxValue: 30
+          scaleType: UNIT_LINEAR_SCALE

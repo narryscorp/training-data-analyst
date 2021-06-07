@@ -10,38 +10,23 @@ CSV_COLUMNS = ["weight_pounds",
                "mother_age",
                "plurality",
                "gestation_weeks"]
-LABEL_COLUMN = "weight_pounds"
+LABEL_COLUMN = "weight_pounds" # TODO: Add CSV_COLUMNS and LABEL_COLUMN
 
 # Set default values for each CSV column.
 # Treat is_male and plurality as strings.
-DEFAULTS = [[0.0], ["null"], [0.0], ["null"], [0.0]]
+DEFAULTS = [[0.0], ["null"], [0.0], ["null"], [0.0]] # TODO: Add DEFAULTS
 
 
 def features_and_labels(row_data):
-    """Splits features and labels from feature dictionary.
-
-    Args:
-        row_data: Dictionary of CSV column names and tensor values.
-    Returns:
-        Dictionary of feature tensors and label tensor.
-    """
     label = row_data.pop(LABEL_COLUMN)
 
-    return row_data, label  # features, label
+    return row_data, label # TODO: Add your code here
+    #pass
 
 
 def load_dataset(pattern, batch_size=1, mode='eval'):
-    """Loads dataset using the tf.data API from CSV files.
-
-    Args:
-        pattern: str, file pattern to glob into list of files.
-        batch_size: int, the number of examples per batch.
-        mode: 'eval' | 'train' to determine if training or evaluating.
-    Returns:
-        `Dataset` object.
-    """
     print("mode = {}".format(mode))
-    # Make a CSV dataset
+
     dataset = tf.data.experimental.make_csv_dataset(
         file_pattern=pattern,
         batch_size=batch_size,
@@ -58,15 +43,11 @@ def load_dataset(pattern, batch_size=1, mode='eval'):
     # Take advantage of multi-threading; 1=AUTOTUNE
     dataset = dataset.prefetch(buffer_size=1)
 
-    return dataset
+    return dataset # TODO: Add your code here
+    #pass
 
 
 def create_input_layers():
-    """Creates dictionary of input layers for each feature.
-
-    Returns:
-        Dictionary of `tf.Keras.layers.Input` layers for each feature.
-    """
     deep_inputs = {
         colname: tf.keras.layers.Input(
             name=colname, shape=(), dtype="float32")
@@ -81,34 +62,21 @@ def create_input_layers():
 
     inputs = {**wide_inputs, **deep_inputs}
 
-    return inputs
+    return inputs # TODO: Add your code here
+    #pass
 
 
 def categorical_fc(name, values):
-    """Helper function to wrap categorical feature by indicator column.
-
-    Args:
-        name: str, name of feature.
-        values: list, list of strings of categorical values.
-    Returns:
-        Categorical and indicator column of categorical feature.
-    """
     cat_column = tf.feature_column.categorical_column_with_vocabulary_list(
             key=name, vocabulary_list=values)
     ind_column = tf.feature_column.indicator_column(
         categorical_column=cat_column)
 
-    return cat_column, ind_column
+    return cat_column, ind_column # TODO: Add your code here
+    #pass
 
 
 def create_feature_columns(nembeds):
-    """Creates wide and deep dictionaries of feature columns from inputs.
-
-    Args:
-        nembeds: int, number of dimensions to embed categorical column down to.
-    Returns:
-        Wide and deep dictionaries of feature columns.
-    """
     deep_fc = {
         colname: tf.feature_column.numeric_column(key=colname)
         for colname in ["mother_age", "gestation_weeks"]
@@ -140,21 +108,11 @@ def create_feature_columns(nembeds):
     deep_fc["crossed_embeds"] = tf.feature_column.embedding_column(
         categorical_column=crossed, dimension=nembeds)
 
-    return wide_fc, deep_fc
+    return wide_fc, deep_fc # TODO: Add your code here
+    #pass
 
 
 def get_model_outputs(wide_inputs, deep_inputs, dnn_hidden_units):
-    """Creates model architecture and returns outputs.
-
-    Args:
-        wide_inputs: Dense tensor used as inputs to wide side of model.
-        deep_inputs: Dense tensor used as inputs to deep side of model.
-        dnn_hidden_units: List of integers where length is number of hidden
-            layers and ith element is the number of neurons at ith layer.
-    Returns:
-        Dense tensor output from the model.
-    """
-    # Hidden layers for the deep side
     layers = [int(x) for x in dnn_hidden_units]
     deep = deep_inputs
     for layerno, numnodes in enumerate(layers):
@@ -176,27 +134,16 @@ def get_model_outputs(wide_inputs, deep_inputs, dnn_hidden_units):
     output = tf.keras.layers.Dense(
         units=1, activation="linear", name="weight")(both)
 
-    return output
+    return output # TODO: Add your code here
+    #pass
 
 
 def rmse(y_true, y_pred):
-    """Calculates RMSE evaluation metric.
-
-    Args:
-        y_true: tensor, true labels.
-        y_pred: tensor, predicted labels.
-    Returns:
-        Tensor with value of RMSE between true and predicted labels.
-    """
-    return tf.sqrt(tf.reduce_mean(tf.square(y_pred - y_true)))
+    return tf.sqrt(tf.reduce_mean(tf.square(y_pred - y_true))) # TODO: Add your code here
+    #pass
 
 
 def build_wide_deep_model(dnn_hidden_units=[64, 32], nembeds=3):
-    """Builds wide and deep model using Keras Functional API.
-
-    Returns:
-        `tf.keras.models.Model` object.
-    """
     # Create input layers
     inputs = create_input_layers()
 
@@ -217,7 +164,8 @@ def build_wide_deep_model(dnn_hidden_units=[64, 32], nembeds=3):
     model = tf.keras.models.Model(inputs=inputs, outputs=output)
     model.compile(optimizer="adam", loss="mse", metrics=[rmse, "mse"])
 
-    return model
+    return model # TODO: Add your code here
+    #pass
 
 
 def train_and_evaluate(args):
@@ -228,10 +176,10 @@ def train_and_evaluate(args):
     trainds = load_dataset(
         args["train_data_path"],
         args["batch_size"],
-        tf.estimator.ModeKeys.TRAIN)
+        'train')
 
     evalds = load_dataset(
-        args["eval_data_path"], 1000, tf.estimator.ModeKeys.EVAL)
+        args["eval_data_path"], 1000, 'eval')
     if args["eval_steps"]:
         evalds = evalds.take(count=args["eval_steps"])
 
